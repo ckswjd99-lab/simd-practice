@@ -250,6 +250,45 @@ void test_min(size_t TEST_SIZE) {
   free(dest2);
 }
 
+void test_andnot(size_t TEST_SIZE) {
+  float sisd_elapsed, simd_elapsed;
+  
+  // Prepare memory
+  char* data1 = (char*)malloc(TEST_SIZE);
+  char* data2 = (char*)malloc(TEST_SIZE);
+  char* dest1 = (char*)malloc(TEST_SIZE);
+  char* dest2 = (char*)malloc(TEST_SIZE);
+
+  for (size_t i = 0; i < TEST_SIZE; i++) {
+    data1[i] = i;
+    data2[i] = TEST_SIZE - i;
+    dest1[i] = 0;
+    dest2[i] = 0;
+  }
+
+  // Test - min with for loop
+  start = clock();
+  andnot_sisd(dest1, data1, data2, TEST_SIZE);
+  end = clock();
+  sisd_elapsed = (float)(end - start)/CLOCKS_PER_SEC;
+  
+  // Test - min with SIMD
+  start = clock();
+  andnot_simd(dest2, data1, data2, TEST_SIZE);
+  end = clock();
+  simd_elapsed = (float)(end - start)/CLOCKS_PER_SEC;
+
+  display_row("andnot", sisd_elapsed, simd_elapsed, check(dest1, dest2, TEST_SIZE));
+
+  free(data1);
+  free(data2);
+  free(dest1);
+  free(dest2);
+}
+
+
+
+// Utils
 int check(char* dest, char* source, size_t count) {
   for (size_t i = 0; i< count; i++) {
     if (source[i] != dest[i]) {

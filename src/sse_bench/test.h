@@ -10,6 +10,7 @@ void test_mul(size_t TEST_SIZE);
 void test_div(size_t TEST_SIZE);
 void test_max(size_t TEST_SIZE);
 void test_min(size_t TEST_SIZE);
+void test_andnot(size_t TEST_SIZE);
 
 int check(char *dest, char* source, size_t count);
 int check_float(float *dest, float* source, size_t count);

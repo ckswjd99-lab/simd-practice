@@ -36,5 +36,8 @@ int main() {
   // Test: min
   test_min(TEST_SIZE);
 
+  // Test: andnot
+  test_andnot(TEST_SIZE);
+
   display_endrow();
 }

@@ -21,3 +21,6 @@ void max_simd(char* dest, char* src1, char* src2, size_t count);
 
 void min_sisd(char* dest, char* src1, char* src2, size_t count);
 void min_simd(char* dest, char* src1, char* src2, size_t count);
+
+void andnot_sisd(char* dest, char* src1, char* src2, size_t count);
+void andnot_simd(char* dest, char* src1, char* src2, size_t count);

@@ -107,10 +107,25 @@ void min_sisd(char* dest, char* src1, char* src2, size_t count) {
 
 void min_simd(char* dest, char* src1, char* src2, size_t count) {
   count /= 0x10;
-  for (size_t i = 0; i< count; i++) {
+  for (size_t i = 0; i < count; i++) {
     __m128i temp1 = _mm_loadu_si128((__m128i*)src1+i);
     __m128i temp2 = _mm_loadu_si128((__m128i*)src2+i);
     *((__m128i*)dest+i) = _mm_min_epi16(temp1, temp2);
   }
 }
 
+void andnot_sisd(char* dest, char* src1, char* src2, size_t count) {
+  count /= 8;
+  for (size_t i = 0; i < count; i++) {
+    *((long long int *)dest + i) = ~*((long long int *)src1 + i) & *((long long int *)src2 + i);
+  }
+}
+
+void andnot_simd(char* dest, char* src1, char* src2, size_t count) {
+  count /= 0x10;
+  for (size_t i = 0; i< count; i++) {
+    __m128i temp1 = _mm_loadu_si128((__m128i*)src1+i);
+    __m128i temp2 = _mm_loadu_si128((__m128i*)src2+i);
+    *((__m128i*)dest+i) = _mm_andnot_si128(temp1, temp2);
+  }
+}
