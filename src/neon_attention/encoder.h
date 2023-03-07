@@ -1,0 +1,17 @@
+#include <arm_neon.h>
+#include <stdlib.h>
+#include "operation.h"
+
+#define EXPECTED_CACHE 64
+
+void encoder_lbl(
+    float32_t *embedded, 
+    float32_t *W_Q, float32_t *W_K, float32_t *W_V, float32_t *W_O,
+    float32_t *FC1, float32_t *FC2,
+    uint32_t token_num, uint32_t d_model, uint32_t d_k, uint32_t d_v, uint32_t h
+);
+
+void attention_lbl(
+    float32_t *Q, float32_t *K, float32_t *V,
+    uint32_t token_num, uint32_t d_k, uint32_t d_v
+);
