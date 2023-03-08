@@ -13,7 +13,7 @@ void encoder_lbl(
     float32_t *output,       // [d_model, token_num]
     uint32_t token_num, uint32_t d_model, uint32_t d_k, uint32_t d_v, uint32_t h, uint32_t d_ff
 ) {
-    float32_t *Q, *K, *QKT, *V, *attention, *mh_attention, *sub1, *ff_hidden, *sub2;
+    float32_t *Q, *K, *QKT, *V, *attention, *mh_attention, *sub1, *ff_hidden;
     Q = malloc(sizeof(float32_t) * token_num * d_k * h);            // (token_num, d_k * h) matrix
     K = malloc(sizeof(float32_t) * token_num * d_k * h);            // (token_num, d_k * h) matrix
     QKT = malloc(sizeof(float32_t) * token_num * token_num * h);    // (token_num, token_num * h) matrix
@@ -69,13 +69,14 @@ void encoder_lbl(
     ff_hidden = malloc(sizeof(float32_t) * d_ff * token_num);   // (d_ff, token_num) matrix
 
     mm_T_simd(sub1, FC1, ff_hidden, token_num, d_ff, d_model);
-    // sub1:      [token_num, d_model] matrix
-    // FC1:       [d_model, d_ff] matrix
-    // ff_hidden: [d_ff, token_num] matrix
 
     relu_inplace_simd(ff_hidden, d_ff * token_num);
 
     mTm_simd(FC2, ff_hidden, output, d_model, token_num, d_ff);
+
+    /* Add & Normalize */
+    addi_inplace_simd(sub1, output, token_num * d_model);
+    normalize_inplace_simd(output, token_num * d_model);
 
 
     /* Clear memories */
@@ -91,12 +92,5 @@ void encoder_lbl(
     free(V_heads);
     free(attention_heads);
     free(ff_hidden);
-
-}
-
-void attention_lbl(
-    float32_t* Q, float32_t* K, float32_t* V,
-    uint32_t token_num, uint32_t d_k, uint32_t d_v
-) {
 
 }

@@ -1,6 +1,7 @@
-#include "encoder.h"
-#include "operation.h"
 #include "utils.h"
+#include "operation.h"
+#include "encoder.h"
+#include "decoder.h"
 
 #include <time.h>
 
@@ -34,6 +35,17 @@ int main() {
 
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    decoder_lbl(embedded, embedded, W_Q, W_K, W_V, W_O, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
 
     free(FC1);
     free(FC2);
