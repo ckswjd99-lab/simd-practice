@@ -1,4 +1,4 @@
-#include "operaton.h"
+#include "operation.h"
 
 void mm_sisd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m, uint32_t p) {
   for (int i=0; i<n; i++) {       // A row selection
@@ -54,4 +54,8 @@ void mm_4x4_simd(float32_t *A, float32_t *B, float32_t *C) {
   C3 = vfmaq_laneq_f32(C3, A2, B3, 2);
   C3 = vfmaq_laneq_f32(C3, A3, B3, 3);
   vst1q_f32(C+12, C0);
+}
+
+void mm_simd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m, uint32_t k) {
+  
 }

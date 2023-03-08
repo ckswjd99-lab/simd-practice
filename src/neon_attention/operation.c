@@ -212,6 +212,18 @@ void mTm_simd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m, 
   }
 }
 
+void mm_T_simd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m, uint32_t k) {
+  // Matrices are in size of A[n, k], B[k, m], C[m, n] transpose of C (C.T) will be used
+
+  float32_t *temp = malloc(sizeof(float32_t) * n * m);
+
+  mm_simd(A, B, temp, n, m, k);
+  transpose(temp, C, n, m);
+
+  free(temp);
+}
+
+
 void softmax_inplace_simd(float32_t *src, uint32_t n) {
   // Vector is in size of src[n]
 
@@ -259,10 +271,113 @@ void scale_inplace_simd(float32_t *src, float32_t scale, uint32_t n) {
   }
 }
 
+void relu_inplace_simd(float32_t *src, uint32_t n) {
+  // Vector(or matrix) is in size of src[n]
+  float32x4_t scope;
+  float32x4_t zeros = vmovq_n_f32(0);
+
+  for (int i=0; i<n; i+=4) {
+    scope = vld1q_f32(src+i);
+    scope = vmaxq_f32(scope, zeros);
+    vst1q_f32(src+i, scope);
+  }
+}
+
+void addi_inplace_simd(float32_t *imm, float32_t *dst, uint32_t n) {
+  // Matrices are in size of [n, m]. Elements in dst will be increased by imm, respectively.
+  float32x4_t dst_scope;
+  float32x4_t imm_scope;
+
+  for (int i=0; i<n; i+=4) {
+    dst_scope = vld1q_f32(dst+i);
+    imm_scope = vld1q_f32(imm+i);
+    dst_scope = vaddq_f32(imm_scope, dst_scope);
+    vst1q_f32(dst+i, dst_scope);
+  }  
+}
+
+void normalize_inplace_simd(float32_t *src, uint32_t n) {
+  // Vector(or matrix) is in size of src[n].
+  float32_t mean = 0, sigma=0;
+  float32x4_t scope, buffer, means, sigmas;
+
+  for (int i=0; i<n; i+=4) {
+    scope = vld1q_f32(src+i);
+    mean += vaddvq_f32(scope);
+  }
+  mean /= n;
+  means = vld1q_dup_f32(&mean);
+
+  for (int i=0; i<n; i+=4) {
+    scope = vld1q_f32(src+i);
+    buffer = vsubq_f32(scope, means);
+    buffer = vmulq_f32(buffer, buffer);
+    sigma += vaddvq_f32(buffer);
+  }
+  sigma = sqrt(sigma/n);
+  sigmas = vld1q_dup_f32(&sigma);
+
+  for (int i=0; i<n; i+=4) {
+    scope = vld1q_f32(src+i);
+    scope = vsubq_f32(scope, means);
+    scope = vdivq_f32(scope, sigmas);
+    vst1q_f32(src+i, scope);
+  }
+
+}
+
 void transpose(float32_t *src, float32_t *dst, uint32_t rows, uint32_t cols) {
   for (int i=0; i<rows; i++) {
     for (int j=0; j<cols; j++) {
       dst[ROWCOL2IDX(cols, j, i)] = src[ROWCOL2IDX(rows, i, j)];
     }
   }
+}
+
+void transpose_4x4_inplace(float32_t *src, uint32_t spacing) {
+  // Transpose 4x4 matrix inplace
+
+  float32_t temp;
+
+  for (int i=0; i<4; i++) {
+    for (int j=0; j<i; j++) {
+      temp = *(src + i * spacing + j);
+      *(src + i * spacing + j) = *(src + j * spacing + i);
+      *(src + j * spacing + i) = temp;
+    }
+  }
+}
+
+void transpose_4x4_inplace_simd(float32_t *src, uint32_t spacing) {
+  // Transpose 4x4 matrix inplace
+
+  float32x4_t D0 = vld1q_f32(src);
+  float32x4_t D1 = vld1q_f32(src + spacing);
+  float32x4_t D2 = vld1q_f32(src + 2*spacing);
+  float32x4_t D3 = vld1q_f32(src + 3*spacing);
+
+  float32x4x2_t buffer1_4x2, buffer2_4x2;
+  float32x4_t buffer1_4, buffer2_4;
+  
+  buffer1_4x2 = vtrnq_f32(D0, D1);
+  buffer2_4x2 = vtrnq_f32(D2, D3);
+  
+  D0 = buffer1_4x2.val[0];
+  D1 = buffer1_4x2.val[1];
+  D2 = buffer2_4x2.val[0];
+  D3 = buffer2_4x2.val[1];
+  
+  buffer1_4 = vcombine_f32(vget_low_f32(D0), vget_low_f32(D2));
+  buffer2_4 = vcombine_f32(vget_high_f32(D0), vget_high_f32(D2));
+  vst1q_f32(src, buffer1_4);
+  vst1q_f32(src + 2*spacing, buffer2_4);
+
+  buffer1_4 = vcombine_f32(vget_low_f32(D1), vget_low_f32(D3));
+  buffer2_4 = vcombine_f32(vget_high_f32(D1), vget_high_f32(D3));
+  vst1q_f32(src + spacing, buffer1_4);
+  vst1q_f32(src + 3*spacing, buffer2_4);
+}
+
+void transpose_inplace(float32_t *src, uint32_t rows, uint32_t cols) {
+  // TODO
 }
