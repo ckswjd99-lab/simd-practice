@@ -67,6 +67,7 @@ int single_attention_fumm(const float* _Q, const float* _K_T, const float* _V_T,
 
 int multi_attention_lbl(const float* _Q, const float* _K_T, const float* _V_T, const float* _W_O, float* _output, float* _buffer_sa, float* _buffer_ma) {
   // _buffer_sa: matrix[token_num, token_num]
+  // _buffer_ma: matrix[d_model, token_num]
 
   matrix_init_zero(_buffer_sa, token_num * token_num);
 
@@ -88,6 +89,7 @@ int multi_attention_lbl(const float* _Q, const float* _K_T, const float* _V_T, c
 
 int multi_attention_fumm(const float* _Q, const float* _K_T, const float* _V_T, const float* _W_O, float* _output, float* _buffer_sa, float* _buffer_ma) {
   // _buffer_sa: matrix[token_num, caching_row]
+  // _buffer_sa: matrix[d_model, caching_row]
 
   for (int i=0; i<token_num; i+=caching_row) {
     matrix_init_zero(_buffer_sa, token_num * caching_row);
@@ -101,7 +103,7 @@ int multi_attention_fumm(const float* _Q, const float* _K_T, const float* _V_T, 
 
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, d_v, caching_row, token_num, 1.0, _V_T, d_v, _buffer_sa, token_num, 1.0, _buffer_ma, d_v);
 
-    cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, d_model, token_num, d_v, 1.0, _W_O, d_model, _buffer_ma, d_v, 1.0, _output + i * d_model, d_model);
+    cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, d_model, caching_row, d_v, 1.0, _W_O, d_model, _buffer_ma, d_v, 1.0, _output + i * d_model, d_model);
   }
 
 }
@@ -131,7 +133,7 @@ int main(int argc, char *argv[]) {
 
   printf("[Test2 - Single head attention, time]\n");
 
-  int test2_num = 1024;
+  int test2_num = 128;
   int test2_score_lbl = 0;
   int test2_score_fumm = 0;
   clock_t start_time, end_time;
@@ -156,9 +158,9 @@ int main(int argc, char *argv[]) {
   }
 
   printf("\tPARAMS\n");
-  printf("\trepeated %d times, d_model: %d, token_num: %d, d_k: %d, d_v: %d, caching_row: %d\n", test2_num, d_model, token_num, d_k, d_v, caching_row);
+  printf("\trepeated %'d times, d_model: %'d, token_num: %'d, d_k: %'d, d_v: %'d, caching_row: %'d\n", test2_num, d_model, token_num, d_k, d_v, caching_row);
   printf("\tRESULTS\n");
-  printf("\tLBL: %d, FuMM: %d\n", test2_score_lbl, test2_score_fumm);
+  printf("\tLBL: %'d, FuMM: %'d\n", test2_score_lbl, test2_score_fumm);
   printf("\n");
 
 
@@ -188,9 +190,9 @@ int main(int argc, char *argv[]) {
   }
 
   printf("\tPARAMS\n");
-  printf("\trepeated %d times. d_model: %d, token_num: %d, d_k: %d, d_v: %d, caching_row: %d\n", test3_num, d_model, token_num, d_k, d_v, caching_row);
+  printf("\trepeated %'d times, d_model: %'d, token_num: %'d, d_k: %'d, d_v: %'d, caching_row: %'d\n", test2_num, d_model, token_num, d_k, d_v, caching_row);
   printf("\tRESULTS\n");
-  printf("\tLBL: %d, FuMM: %d\n", test3_score_lbl, test3_score_fumm);
+  printf("\tLBL: %'d, FuMM: %'d\n", test3_score_lbl, test3_score_fumm);
   printf("\n");
 
   return 0;
