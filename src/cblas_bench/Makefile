@@ -1,5 +1,5 @@
 clean:
-	rm ./*.out
+	rm *.out
 
 test:
-	gcc main.c -o tester.out -lopenblas -lm -g
+	gcc main.c utils.c operation.c -o tester.out -lopenblas -lm -g

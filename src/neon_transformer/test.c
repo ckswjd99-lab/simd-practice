@@ -36,7 +36,7 @@ int main() {
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
-    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
+    encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, b,ias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
     encoder_lbl(embedded, W_Q, W_K, W_V, W_O, FC1, bias1, FC2, bias2, embedded, token_num, d_model, d_k, d_v, h, d_ff);
 
