@@ -18,8 +18,14 @@ void mm_T_simd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m,
 void dotaddq_lane_f32(float32x4_t *src1, float32x4_t *src2, float32x4_t *dst, int lane);
 // Dot product sources, then store at a lane of dst
 
+void softmax_inplace(float32_t *src, uint32_t n);
+// Vector is in size of src[n]
+
 void softmax_inplace_simd(float32_t *src, uint32_t n);
 // Vector is in size of src[n]
+
+void scale_inplace(float32_t *src, float32_t scale, uint32_t n);
+// Vector(or matrix) is in size of src[n]
 
 void scale_inplace_simd(float32_t *src, float32_t scale, uint32_t n);
 // Vector(or matrix) is in size of src[n]

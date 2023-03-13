@@ -14,7 +14,7 @@ void matrix_init_rand(float32_t *M, uint32_t numvals) {
 }
 
 void matrix_init_zero(float32_t *M, uint32_t numvals) {
-  memset(M, 0, sizeof(float32_t) * numvals);
+  for (int i=0; i<numvals; i++) M[i] = 0;
 }
 
 int matrix_comp(float32_t *A, float32_t *B, uint32_t rows, uint32_t cols) {

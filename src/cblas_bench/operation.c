@@ -224,6 +224,23 @@ void mm_T_simd(float32_t *A, float32_t *B, float32_t *C, uint32_t n, uint32_t m,
 }
 
 
+void softmax_inplace(float32_t *src, uint32_t n) {
+  // Vector is in size of src[n]
+
+  // find max
+  float32_t max = -FLT_MAX;
+  for (int i=0; i<n; i++) max = src[i] > max ? src[i] : max;
+
+  // calc sum
+  float32_t sum = 0;
+  for (int i=0; i<n; i++) sum += expf(src[i] - max);
+
+  // inplace softmax
+  for (int i=0; i<n; i++) src[i] = expf(src[i] - max) / sum;
+  
+}
+
+
 void softmax_inplace_simd(float32_t *src, uint32_t n) {
   // Vector is in size of src[n]
 
@@ -257,6 +274,12 @@ void softmax_inplace_simd(float32_t *src, uint32_t n) {
   // scale by sum
   scale_inplace_simd(src, sumexp, n);
 
+}
+
+void scale_inplace(float32_t *src, float32_t scale, uint32_t n) {
+  for (int i=0; i<n; i++) {
+    src[i] *= scale;
+  }
 }
 
 void scale_inplace_simd(float32_t *src, float32_t scale, uint32_t n) {
